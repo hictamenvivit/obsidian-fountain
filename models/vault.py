@@ -33,4 +33,8 @@ Draft date: {today}
             return re.findall(r"\[\[([^\]]*)\]\]", f.read())
 
     def extract_fountain(self):
-        return "\n\n".join([f"Chapitre {i}: {note.name}" + note.extract_foutain() for (i, note) in enumerate(self.chapters_notes)])
+        return "\n\n".join([f"*** Chapitre {i}: {note.name} ***" + note.extract_foutain() for (i, note) in enumerate(self.chapters_notes)])
+
+    def save(self, save_path):
+        with open(save_path, "w") as f:
+            f.write(self.extract_fountain())

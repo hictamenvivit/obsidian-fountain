@@ -5,6 +5,8 @@ import requests
 import typer
 from datetime import datetime
 
+from models import Vault
+
 URL = "http://localhost:5000"
 
 app = typer.Typer()
@@ -22,48 +24,12 @@ def convert(file: str):
 
 
 @app.command()
-def parse(file: str):
-    with open(file) as f:
-        content = f.read()
-    if "@&" not in content:
-        print("No fountain in this file")
-        return
-    fountain = content.split("@&")[1].split("&@")[0]
-
-    save_path = file.replace(" ", "_") + ".fountain"
-
-    with open(save_path, "w") as f:
-        f.write(fountain)
-    convert(save_path)
-    os.remove(save_path)
-
-
-@app.command()
 def parse_vault(path: str):
-    today = datetime.today().strftime('%Y-%m-%d')
-    with open(os.path.join(path, "Chapitres.md")) as f:
-        chapitres = re.findall(r"\[\[([^\]]*)\]\]", f.read())
-    fountain_all = f"""Title:
-    _**{os.path.basename(path)}**_
-Credit: Written by
-Author: Maxime Bettinelli
-Draft date: {today}
-    
-    """
-    for chapter_number, chapitre in enumerate(chapitres):
-        with open(os.path.join(path, f"{chapitre}.md")) as f:
-            content = f.read()
-            if "@&" not in content:
-                continue
-            fountain = content.split("@&")[1].split("&@")[0]
-
-            fountain_all += f"*** CHAPITRE {chapter_number} {chapitre} ***\n\n" + fountain
-    save_path = os.path.join(os.getcwd(), f"{os.path.basename(path).replace(' ', '_')}.fountain")
-    with open(save_path, "w") as f:
-        f.write(fountain_all)
+    vault = Vault(path)
+    save_path = os.path.join(os.getcwd(), f"{vault.title.replace(' ', '_')}.fountain")
+    vault.save(save_path)
     convert(save_path)
     os.remove(save_path)
-
 
 
 if __name__ == '__main__':
