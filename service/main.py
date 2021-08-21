@@ -21,7 +21,7 @@ def convert():
         os.system(
             f"afterwriting --source {save_path} --pdf {save_path.replace('.fountain', '.pdf')}")
 
-        return send_file(save_path.replace(".fountain",".pdf"))
+        return send_file(save_path.replace(".fountain", ".pdf"))
     return "else"
 
 
