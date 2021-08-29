@@ -2,7 +2,7 @@ import datetime
 import os
 import re
 
-from models import Note
+from models import Note, Script
 
 
 class Vault:
@@ -15,17 +15,8 @@ class Vault:
         self.title = os.path.basename(os.path.normpath(path))
         self.chapters_file = chapters_file
         self.chapters_notes = [Note(os.path.join(path, c + ".md")) for c in self.chapters]
+        self.script = Script(title=self.title, chapters_notes=self.chapters_notes)
 
-    @property
-    def header(self):
-        today = datetime.today().strftime('%Y-%m-%d')
-        return f"""Title:
-    _**{self.title}**_
-Credit: Written by
-Author: Maxime Bettinelli
-Draft date: {today}
-    
-"""
 
     @property
     def chapters(self):
@@ -33,9 +24,7 @@ Draft date: {today}
             return re.findall(r"\[\[([^\]]*)\]\]", f.read())
 
     def extract_fountain(self):
-        return "\n\n".join([f"*** Chapitre {i}: {note.name} ***" + note.extract_foutain() for (i, note) in
-                            enumerate(self.chapters_notes)])
+        return self.script.as_fountain()
 
     def save(self, save_path):
-        with open(save_path, "w") as f:
-            f.write(self.extract_fountain())
+        self.script.save(save_path)
