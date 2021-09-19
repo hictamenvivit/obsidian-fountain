@@ -20,3 +20,19 @@ class Note:
 
     def extract_foutain(self):
         return self.parse_for_fountain(self.content)
+
+
+class ChapterNote(Note):
+
+    def __init__(self, path):
+        try:
+            super().__init__(path)
+        except FileNotFoundError:
+            content = """#chapitre
+
+@&
+
+&@"""
+            with open(path, "w") as file:
+                file.write(content)
+            super().__init__(path)

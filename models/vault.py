@@ -2,7 +2,7 @@ import datetime
 import os
 import re
 
-from models import Note, Script
+from models import Note, Script, ChapterNote
 
 
 class Vault:
@@ -14,7 +14,7 @@ class Vault:
         self.path = path
         self.title = os.path.basename(os.path.normpath(path))
         self.chapters_file = chapters_file
-        self.chapters_notes = [Note(os.path.join(path, c + ".md")) for c in self.chapters]
+        self.chapters_notes = [ChapterNote(os.path.join(path, c + ".md")) for c in self.chapters]
         self.script = Script(title=self.title, chapters_notes=self.chapters_notes, no_chapters_titles=no_chapters_titles,
                              version=version)
 
